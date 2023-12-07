@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-@Time    : 2023/5/11 17:45
+@Time    : 2023/5/11 22:12
 @Author  : alexanderwu
-@File    : write_test.py
+@File    : environment.py
 """
-from metagpt.logs import logger
 from metagpt.actions.action import Action
+from metagpt.logs import logger
 from metagpt.utils.common import CodeParser
 
 PROMPT_TEMPLATE = """
@@ -29,13 +29,22 @@ you should correctly import the necessary classes based on these file locations!
 ## {test_file_name}: Write test code with triple quoto. Do your best to implement THIS ONLY ONE FILE.
 """
 
+
 class WriteTest(Action):
     def __init__(self, name="WriteTest", context=None, llm=None):
         super().__init__(name, context, llm)
 
     async def write_code(self, prompt):
         code_rsp = await self._aask(prompt)
-        code = CodeParser.parse_code(block="", text=code_rsp)
+
+        try:
+            code = CodeParser.parse_code(block="", text=code_rsp)
+        except Exception:
+            # Handle the exception if needed
+            logger.error(f"Can't parse the code: {code_rsp}")
+
+            # Return code_rsp in case of an exception, assuming llm just returns code as it is and doesn't wrap it inside ```
+            code = code_rsp
         return code
 
     async def run(self, code_to_test, test_file_name, source_file_path, workspace):
@@ -43,7 +52,7 @@ class WriteTest(Action):
             code_to_test=code_to_test,
             test_file_name=test_file_name,
             source_file_path=source_file_path,
-            workspace=workspace
+            workspace=workspace,
         )
         code = await self.write_code(prompt)
         return code

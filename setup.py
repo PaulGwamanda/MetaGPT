@@ -30,21 +30,24 @@ with open(path.join(here, "requirements.txt"), encoding="utf-8") as f:
 
 setup(
     name="metagpt",
-    version="0.1",
+    version="0.3.0",
     description="The Multi-Role Meta Programming Framework",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://gitlab.deepwisdomai.com/pub/metagpt",
+    url="https://github.com/geekan/MetaGPT",
     author="Alexander Wu",
     author_email="alexanderwu@fuzhi.ai",
     license="Apache 2.0",
     keywords="metagpt multi-role multi-agent programming gpt llm",
-    packages=find_packages(exclude=["contrib", "docs", "examples"]),
+    packages=find_packages(exclude=["contrib", "docs", "examples", "tests*"]),
     python_requires=">=3.9",
     install_requires=requirements,
     extras_require={
         "playwright": ["playwright>=1.26", "beautifulsoup4"],
-        "selenium": ["selenium>4", "webdriver_manager<3.9", "beautifulsoup4"],
+        "selenium": ["selenium>4", "webdriver_manager", "beautifulsoup4"],
+        "search-google": ["google-api-python-client==2.94.0"],
+        "search-ddg": ["duckduckgo-search==3.8.5"],
+        "pyppeteer": ["pyppeteer>=1.0.2"],
     },
     cmdclass={
         "install_mermaid": InstallMermaidCLI,
